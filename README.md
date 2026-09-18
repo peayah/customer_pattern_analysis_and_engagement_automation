@@ -1,1 +1,1 @@
-# customer_pattern_analysis_and_engagement_automation
+# Customer Pattern Analysis and Customer Engagement Automation
