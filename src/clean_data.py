@@ -46,6 +46,4 @@ def clean_data(df):
     # Sort by InvoiceDate
     df = df.sort_values("InvoiceDate").reset_index(drop=True)
 
-    print("\ncleaning complete. Check\n")
-
     return df
