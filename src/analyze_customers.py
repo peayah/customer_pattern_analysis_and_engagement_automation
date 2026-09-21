@@ -25,27 +25,21 @@ def identify_customers(df):
 
     return identified
 
-
-def create_high_value_customers(customer_summary):
+def identify_corporate_candidates(customer_summary):
     """
-    identify top 20% based on total spend.
+    Identify customers who meet at least two of the three
+    corporate-candidate criteria.
     """
 
-    top_20_count = round(len(customer_summary) * 0.20)
+    corporate_candidates = customer_summary[
+        (
+            (customer_summary["Purchases"] >= 16).astype(int)
+            + (customer_summary["Total_Spend"] >= 5625.004).astype(int)
+            + (customer_summary["Unique_Products"] >= 202.35).astype(int)
+        ) >= 2
+    ].copy()
 
-    high_value_customers = (
-        customer_summary
-        .sort_values("Total_Spend", ascending=False)
-        .head(top_20_count)
-        .copy()
-    )
-
-    other_customers = customer_summary.drop(
-        high_value_customers.index
-    ).copy()
-
-    return high_value_customers, other_customers
-
+    return corporate_candidates
 
 def analyze_one_purchase_customers(customer_summary):
     """

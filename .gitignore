@@ -1,8 +1,7 @@
+data/
+state_test.data.csv
 retail_data.csv
 
-state_test.data.csv
-
-test_customer_state.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

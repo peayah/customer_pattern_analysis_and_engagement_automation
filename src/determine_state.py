@@ -6,7 +6,7 @@ from analyze_customers import (
     create_customer_summary,
     calculate_customer_rhythm,
     calculate_customer_recency,
-    create_high_value_customers,
+    identify_corporate_candidates,
 )
 
 
@@ -46,17 +46,17 @@ def determine_customer_state(df):
     customer_state = customer_state.join(recency)
 
     # Identify high-value customers
-    high_value_customers, _ = create_high_value_customers(
-        customer_summary
+    corporate_candidates = identify_corporate_candidates(
+    customer_summary
     )
 
-    high_value_ids = set(
-        high_value_customers.index
+    corporate_ids = set(
+    corporate_candidates.index
     )
-
+    
     customer_state["Customer_Type"] = np.where(
-        customer_state.index.isin(high_value_ids),
-        "High-Value",
+        customer_state.index.isin(corporate_ids),
+        "Corporate Candidate",
         "Other"
     )
 
@@ -67,6 +67,7 @@ def determine_customer_state(df):
         / customer_state["Typical_Interval"]
     )
 
+    
     def assign_state(row):
 
         # Cannot establish a personal purchasing rhythm
@@ -83,7 +84,7 @@ def determine_customer_state(df):
         # is considered meaningfully late.
         if row["Late_Ratio"] >= 1.25:
 
-            if row["Customer_Type"] == "High-Value":
+            if row["Customer_Type"] == "Corporate Candidate":
                 return "High-Value Late"
 
             return "Late"

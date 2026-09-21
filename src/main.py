@@ -3,7 +3,7 @@ from clean_data import clean_data
 from analyze_customers import (
     identify_customers, 
     create_customer_summary, 
-    create_high_value_customers, 
+    identify_corporate_candidates, 
     analyze_one_purchase_customers, 
     analyze_product_concentration,
 )
@@ -41,8 +41,8 @@ def main():
 
     customer_summary = create_customer_summary(identified)
 
-    high_value_customers, other_customers = (
-        create_high_value_customers(customer_summary)
+    corporate_candidates = identify_corporate_candidates(
+        customer_summary
     )
 
     one_purchase_customers, multiple_purchase_customers = (
@@ -75,25 +75,25 @@ def main():
         zero_day_stock_codes
     )
 
-    high_value_zero_day_participation = (
+    corporate_zero_day_participation = (
         analyze_high_value_zero_day_participation(
-            identified,
-            zero_day_stock_codes,
-            high_value_customers
-        )
+        identified,
+        zero_day_stock_codes,
+        corporate_candidates
     )
+)
 
     print(product_date_range.head())
     print(zero_day_products.head())
     print(product_reach.head())
     print(f"Zero-day revenue: ${zero_day_revenue:,.2f}")
-    print(high_value_zero_day_participation)
+    print(corporate_zero_day_participation)
 
     print("\nPRODUCT ANALYSIS DONE\n")
 
     ###################
     #  DETERMINE STATE
-    
+
     customer_state = determine_customer_state(df)
 
     ###################

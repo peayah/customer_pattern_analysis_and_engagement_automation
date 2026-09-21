@@ -46,4 +46,10 @@ def clean_data(df):
     # Sort by InvoiceDate
     df = df.sort_values("InvoiceDate").reset_index(drop=True)
 
+    df["CustomerID"] = (
+    df["CustomerID"]
+    .astype(str)
+    .str.replace(".0", "", regex=False)
+    )
+
     return df
