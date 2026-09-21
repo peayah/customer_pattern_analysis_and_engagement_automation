@@ -80,3 +80,66 @@ def analyze_product_concentration(df):
     )
 
     return product_concentration
+
+def calculate_customer_rhythm(df):
+    """
+    Calculate each customer's typical purchasing interval
+    and variation based on invoice-level purchases.
+    """
+
+    purchase_events = (
+        df
+        .groupby(["CustomerID", "InvoiceNo"])
+        .agg(
+            Purchase_Date=("InvoiceDate", "min")
+        )
+        .reset_index()
+        .sort_values(["CustomerID", "Purchase_Date"])
+    )
+
+    purchase_events["Days_Between"] = (
+        purchase_events
+        .groupby("CustomerID")["Purchase_Date"]
+        .diff()
+        .dt.total_seconds()
+        .div(86400)
+    )
+
+    # Ignore same-day purchases when establishing purchasing rhythm
+    valid_intervals = purchase_events[
+        purchase_events["Days_Between"] > 0
+    ].copy()
+
+    customer_rhythm = (
+        valid_intervals
+        .groupby("CustomerID")["Days_Between"]
+        .agg(
+            Typical_Interval="median",
+            Average_Interval="mean",
+            Interval_Variation="std",
+            Interval_Count="count"
+        )
+    )
+
+    return customer_rhythm
+
+
+def calculate_customer_recency(df):
+    """
+    Calculate the number of days since each customer's
+    most recent observed purchase.
+    """
+
+    last_purchase = (
+        df
+        .groupby("CustomerID")["InvoiceDate"]
+        .max()
+    )
+
+    analysis_date = df["InvoiceDate"].max()
+
+    recency = (
+        analysis_date - last_purchase
+    ).dt.total_seconds().div(86400)
+
+    return recency.rename("Days_Since_Last_Purchase")

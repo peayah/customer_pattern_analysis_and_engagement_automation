@@ -14,11 +14,13 @@ from analyze_products import (
     analyze_zero_day_revenue,
     analyze_high_value_zero_day_participation,
 )
+from determine_state import determine_customer_state
+
 def main():
     print("\nBEGIN\n")
     ###################
     # LOAD
-    df = load_data()
+    df = load_data("retail_data.csv")
     print("\nLOADING DONE\n")
 
     print(df.head())
@@ -90,9 +92,12 @@ def main():
     print("\nPRODUCT ANALYSIS DONE\n")
 
     ###################
-    #  
+    #  DETERMINE STATE
     
-    
+    customer_state = determine_customer_state(df)
+
+    ###################
+    # 
     
     
     
