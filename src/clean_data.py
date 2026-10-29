@@ -36,9 +36,40 @@ def clean_data(df):
     else:
         print("no duplicate rows. Check")
 
+
     # data types
     # convert InvoiceDate to datetime
-    df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"])
+    # df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"])
+
+    ####
+    date_strings = df["InvoiceDate"].astype("string").str.strip()
+
+    parsed_dates = pd.to_datetime(
+        date_strings,
+        format="%m/%d/%y %H:%M",
+        errors="coerce"
+    )
+
+    invalid_dates = parsed_dates.isna()
+    invalid_count = invalid_dates.sum()
+    invalid_percentage = (
+        invalid_count / len(df) * 100 if len(df) > 0 else 0
+    )
+
+    print(f"Invalid dates: {invalid_count}")
+    print(f"Invalid date percentage: {invalid_percentage:.2f}%")
+
+    if invalid_percentage < 5:
+        df = df.loc[~invalid_dates].copy()
+        df["InvoiceDate"] = parsed_dates.loc[~invalid_dates]
+        print(f"Removed {invalid_count} rows with invalid dates.")
+    else:
+        raise ValueError(
+            f"{invalid_percentage:.2f}% of dates are invalid. "
+            "This meets or exceeds the 5% threshold. "
+            "Investigate the data before proceeding."
+        )
+    ####
 
     # add revenue column
     df["Revenue"] = df["Quantity"] * df["UnitPrice"]
